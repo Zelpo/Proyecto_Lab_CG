@@ -40,6 +40,13 @@ CTexture window;
 CTexture brilloso;
 CTexture piso;
 CTexture pared;
+CTexture puertape;
+CTexture madsim;
+CTexture puertado;
+CTexture madbi;
+CTexture plasticye;
+CTexture plasticbla;
+CTexture plasticbro;
 CTexture gif0;
 CTexture gif1;
 CTexture gif2;
@@ -64,6 +71,10 @@ int ani2 = 0;
 
 bool ani3 = false;
 bool ani4 = false;
+bool ani5 = false;
+
+float mueve = 0.0;
+float cae = 0.0;
 
 void arbol()
 {
@@ -197,6 +208,34 @@ void InitGL ( GLvoid )     // Inicializamos parametros
 	pared.BuildGLTexture();
 	pared.ReleaseImage();
 
+	puertape.LoadTGA("puertape.tga");
+	puertape.BuildGLTexture();
+	puertape.ReleaseImage();
+
+	madsim.LoadTGA("madsim.tga");
+	madsim.BuildGLTexture();
+	madsim.ReleaseImage();
+
+	puertado.LoadTGA("puertado.tga");
+	puertado.BuildGLTexture();
+	puertado.ReleaseImage();
+
+	madbi.LoadTGA("madbi.tga");
+	madbi.BuildGLTexture();
+	madbi.ReleaseImage();
+
+	plasticye.LoadTGA("plasticye.tga");
+	plasticye.BuildGLTexture();
+	plasticye.ReleaseImage();
+
+	plasticbla.LoadTGA("plasticbla.tga");
+	plasticbla.BuildGLTexture();
+	plasticbla.ReleaseImage();
+
+	plasticbro.LoadTGA("plasticbro.tga");
+	plasticbro.BuildGLTexture();
+	plasticbro.ReleaseImage();
+
 	gif0.LoadTGA("gif0.tga");
 	gif0.BuildGLTexture();
 	gif0.ReleaseImage();
@@ -254,8 +293,14 @@ void display ( void )   // Creamos la funcion donde se dibuja
 				glTranslatef(0.0, 4.0, 0.0);
 
 				glPushMatrix();
+					if (ani5) {
+						glTranslatef(0.0, -mueve, 0.0);
+						glTranslatef(4.5, -9, 0.0);
+						glRotatef(cae, 0.0, 0.0, 1.0);
+						glTranslatef(-4.5, 9, 0.0);
+					}
 					glTranslatef(-4.5, -9.0, 4.5);
-					
+
 					glPushMatrix();
 						glTranslatef(6.0, 0.0, 0.0);
 						glBindTexture(GL_TEXTURE_2D, windoor.GLindex);
@@ -331,182 +376,230 @@ void display ( void )   // Creamos la funcion donde se dibuja
 					glEnd();
 				glPopMatrix();
 
+				if (ani5) {
+					glTranslatef(0.0, -mueve, 0.0);
+					glTranslatef(4.5, -9, 0.0);
+					glRotatef(cae, 0.0, 0.0, 1.0);
+					glTranslatef(-4.5, 9, 0.0);
+				}
 				edificio.prismaEsp1(18.0, 9.0, 9.0, fachada.GLindex);
 				glTranslatef(2.25, 0.0, -8.0);
+				if (ani5) {
+					glTranslatef(-4.5, -9, 0.0);
+					glRotatef(cae, 0.0, 0.0, -1.0);
+					glRotatef(cae, 0.0, 0.0, -1.0);
+					glTranslatef(4.5, 9, 0.0);
+				}
 				edificio.prismaEsp2(18.0, 4.5, 7.0, fachada.GLindex);
 				glTranslatef(-2.25, 0.0, -8.0);
+				if (ani5) {
+					glTranslatef(4.5, -9, 0.0);
+					glRotatef(cae, 0.0, 0.0, 1.0);
+					glRotatef(cae, 0.0, 0.0, 1.0);
+					glTranslatef(-4.5, 9, 0.0);
+				}
 				edificio.prismaEsp2(18.0, 9.0, 9.0, fachada.GLindex);
 				glTranslatef(-2.25, 0.0, -8.0);
 				edificio.prismaEsp2(18.0, 4.5, 7.0, fachada.GLindex);
 			glPopMatrix();
-
-			//Un cubo para la sala
-			glPushMatrix();
-				glTranslatef(0.0, -2.99, 0.0);
-				glDisable(GL_LIGHTING);
-				sala.prismaEsp3(4.0, 8.99, 8.99, pared.GLindex, piso.GLindex);
-				glEnable(GL_LIGHTING);
-			glPopMatrix();
-
-			glTranslatef(0.0, 0.01, 0.0);
-
-			//Creación del mueble 1
-			glPushMatrix();
-				glTranslatef(0.0, -4.775, 0.0);
-				mueble1.prisma(0.45, 0.05, 0.9, piel.GLindex);
-				mueble1.prisma(0.45, 0.9, 0.05, piel.GLindex);
+			
+			if (!ani5) {
+				//Un cubo para la sala
 				glPushMatrix();
-					glTranslatef(0.0, 0.25, 0.0);
-					mueble1.prisma(0.05, 0.9, 0.9, piel.GLindex);
+					glTranslatef(0.0, -2.99, 0.0);
+					glDisable(GL_LIGHTING);
+					sala.prismaEsp3(4.0, 8.99, 8.99, pared.GLindex, piso.GLindex);
+					glEnable(GL_LIGHTING);
 				glPopMatrix();
-			glPopMatrix();
 
-			//Creación del mueble 2
-			glPushMatrix();
-				glTranslatef(0.375, -4.95, -1.5);
-				mueble2.prisma(0.1, 1.2, 0.4, NULL);
+				glTranslatef(0.0, 0.01, 0.0);
+
+				//Creación del mueble 1
 				glPushMatrix();
-					glTranslatef(-0.45, 0.275, 0.0);
-					glScalef(0.3, 0.45, 0.4);
-					glRotatef(90.0, 1.0, 0.0, 0.0);
-					mueble2.prisma2(window.GLindex, fachada.GLindex);
-				glPopMatrix();
-				glPushMatrix();
-					glTranslatef(0.45, 0.275, 0.0);
-					glScalef(0.3, 0.45, 0.4);
-					glRotatef(90.0, 1.0, 0.0, 0.0);
-					mueble2.prisma2(window.GLindex, fachada.GLindex);
-				glPopMatrix();
-				glPushMatrix();
-					glTranslatef(0.0, 0.51, 0.0);
-					mueble2.prisma(0.02, 1.2, 0.4, NULL);
+					glTranslatef(0.0, -4.775, 0.0);
+					mueble1.prisma(0.45, 0.05, 0.9, piel.GLindex);
+					mueble1.prisma(0.45, 0.9, 0.05, piel.GLindex);
 					glPushMatrix();
-						glTranslatef(-0.45, 0.235, -0.05);
-						glScalef(0.3, 0.45, 0.4);
+						glTranslatef(0.0, 0.25, 0.0);
+						mueble1.prisma(0.05, 0.9, 0.9, piel.GLindex);
+					glPopMatrix();
+				glPopMatrix();
+
+				//Creación del mueble 2
+				glPushMatrix();
+					glTranslatef(0.375, -4.95, -1.5);
+					mueble2.prisma(0.1, 1.2, 0.4, madsim.GLindex);
+					glPushMatrix();
+						glTranslatef(-0.5, 0.275, 0.0);
+						glScalef(0.2, 0.45, 0.4);
 						glRotatef(90.0, 1.0, 0.0, 0.0);
-						mueble2.prisma2(window.GLindex, fachada.GLindex);
+						mueble2.prisma2(puertape.GLindex, madsim.GLindex);
 					glPopMatrix();
 					glPushMatrix();
-						glTranslatef(0.45, 0.235, -0.05);
-						glScalef(0.3, 0.45, 0.4);
+						glTranslatef(0.5, 0.275, 0.0);
+						glScalef(0.2, 0.45, 0.4);
 						glRotatef(90.0, 1.0, 0.0, 0.0);
-						mueble2.prisma2(window.GLindex, fachada.GLindex);
+						mueble2.prisma2(puertape.GLindex, madsim.GLindex);
 					glPopMatrix();
-					glTranslatef(0.0, 0.47, 0.0);
-					mueble2.prisma(0.02, 1.2, 0.4, NULL);
-					
-					//Creación de la television 3
 					glPushMatrix();
-						glTranslatef(0.0, 0.435, 0.0);
+						glTranslatef(0.0, 0.51, 0.0);
+						mueble2.prisma(0.02, 1.2, 0.4, madsim.GLindex);
 						glPushMatrix();
-							glScalef(1.25, 0.75, 0.1);
+							glTranslatef(-0.5, 0.235, -0.05);
+							glScalef(0.2, 0.45, 0.3);
 							glRotatef(90.0, 1.0, 0.0, 0.0);
-							television3.prisma2((gifs[ani2]).GLindex, brilloso.GLindex);
+							mueble2.prisma2(puertape.GLindex, madsim.GLindex);
 						glPopMatrix();
 						glPushMatrix();
-							glTranslatef(-0.5, -0.4, 0.0);
-							glRotatef(-22.5, 0, 1, 0);
-							glColor3f(0.0, 0.0, 1.0);
-							television3.prisma(0.05, 0.05, 0.3, brilloso.GLindex);
+							glTranslatef(0.5, 0.235, -0.05);
+							glScalef(0.2, 0.45, 0.3);
+							glRotatef(90.0, 1.0, 0.0, 0.0);
+							mueble2.prisma2(puertape.GLindex, madsim.GLindex);
 						glPopMatrix();
+						glTranslatef(0.0, 0.47, 0.0);
+						mueble2.prisma(0.02, 1.2, 0.4, madsim.GLindex);
+					
+						//Creación de la television 3
 						glPushMatrix();
-							glTranslatef(0.5, -0.4, 0.0);
-							glRotatef(22.5, 0, 1, 0);
-							television3.prisma(0.05, 0.05, 0.3, brilloso.GLindex);
-							glColor3f(1.0, 1.0, 1.0);
+							glTranslatef(0.0, 0.435, 0.0);
+							glPushMatrix();
+								glScalef(1.25, 0.75, 0.1);
+								glRotatef(90.0, 1.0, 0.0, 0.0);
+								television3.prisma2((gifs[ani2]).GLindex, brilloso.GLindex);
+							glPopMatrix();
+							glPushMatrix();
+								glTranslatef(-0.5, -0.4, 0.0);
+								glRotatef(-22.5, 0, 1, 0);
+								glColor3f(0.0, 0.0, 1.0);
+								television3.prisma(0.05, 0.05, 0.3, brilloso.GLindex);
+							glPopMatrix();
+							glPushMatrix();
+								glTranslatef(0.5, -0.4, 0.0);
+								glRotatef(22.5, 0, 1, 0);
+								television3.prisma(0.05, 0.05, 0.3, brilloso.GLindex);
+								glColor3f(1.0, 1.0, 1.0);
+							glPopMatrix();
 						glPopMatrix();
+
 					glPopMatrix();
+					glTranslatef(0.0, 0.47, -0.21);
+					mueble2.prisma(1.04, 1.2, 0.02, madsim.GLindex);
+				glPopMatrix();
 
+				//Creación del mueble 4
+				glPushMatrix();
+					glTranslatef(-1.125, -4.675, -1.5);
+					glPushMatrix();
+						glScalef(0.8, 0.65, 0.35);
+						glRotatef(90.0, 1.0, 0.0, 0.0);
+						mueble4.prisma2(puertado.GLindex, madbi.GLindex);
+					glPopMatrix();
+					glTranslatef(0.0, 0.85, 0.0);
+					glPushMatrix();
+						glScalef(0.6, 1.05, 0.35);
+						glRotatef(90.0, 1.0, 0.0, 0.0);
+						mueble4.prisma2(puertado.GLindex, madbi.GLindex);
+					glPopMatrix();
 				glPopMatrix();
-				glTranslatef(0.0, 0.47, -0.21);
-				mueble2.prisma(1.04, 1.2, 0.02, NULL);
-			glPopMatrix();
 
-			//Creación del mueble 4
-			glPushMatrix();
-				glTranslatef(-1.125, -4.675, -1.5);
+				//Creación de las cajas 5
 				glPushMatrix();
-					glScalef(0.8, 0.65, 0.35);
-					glRotatef(90.0, 1.0, 0.0, 0.0);
-					mueble4.prisma2(window.GLindex, fachada.GLindex);
+					glTranslatef(-2.125, -4.85, -1.5);
+					cajas5.prisma(0.3, 0.7, 0.4, plasticbla.GLindex);
+					glTranslatef(0.0, 0.175, 0.0);
+					cajas5.prisma(0.05, 0.75, 0.5, plasticye.GLindex);
+					glTranslatef(0.0, 0.175, 0.0);
+					cajas5.prisma(0.3, 0.7, 0.4, plasticbla.GLindex);
+					glTranslatef(0.0, 0.175, 0.0);
+					cajas5.prisma(0.05, 0.75, 0.5, plasticye.GLindex);
+					glTranslatef(0.0, 0.175, 0.0);
+					cajas5.prisma(0.3, 0.6, 0.4, plasticbro.GLindex);
 				glPopMatrix();
-				glTranslatef(0.0, 0.85, 0.0);
-				glPushMatrix();
-					glScalef(0.6, 1.05, 0.35);
-					glRotatef(90.0, 1.0, 0.0, 0.0);
-					mueble4.prisma2(window.GLindex, fachada.GLindex);
-				glPopMatrix();
-			glPopMatrix();
 
-			//Creación de las cajas 5
-			glPushMatrix();
-				glTranslatef(-2.125, -4.85, -1.5);
-				cajas5.prisma(0.3, 0.7, 0.4, NULL);
-				glTranslatef(0.0, 0.175, 0.0);
-				cajas5.prisma(0.05, 0.75, 0.5, NULL);
-				glTranslatef(0.0, 0.175, 0.0);
-				cajas5.prisma(0.3, 0.7, 0.4, NULL);
-				glTranslatef(0.0, 0.175, 0.0);
-				cajas5.prisma(0.05, 0.75, 0.5, NULL);
-				glTranslatef(0.0, 0.175, 0.0);
-				cajas5.prisma(0.3, 0.6, 0.4, NULL);
-			glPopMatrix();
+				//Creación del sillon 6
+				glPushMatrix();
+					glTranslatef(-2.125, -4.8, 0.8);
+					glRotatef(90.0, 0.0, 1.0, 0.0);
+					sillon6.prisma(0.4, 2.4, 0.8, piel.GLindex); //Asiento
+					glPushMatrix();
+						glTranslatef(1.1, 0.3, 0.0);
+						sillon6.prisma(0.2, 0.2, 0.8, piel.GLindex); //Recargadera brazo izquierdo
+						glTranslatef(0.0, 0.1, -0.4);
+						glRotatef(90.0, 1, 0, 0);
+						sillon6.cilindro(0.1, 0.8, 20, piel.GLindex); //Cilindro de recargadera
+					glPopMatrix();
+					glPushMatrix();
+						glTranslatef(-1.1, 0.3, 0.0);
+						sillon6.prisma(0.2, 0.2, 0.8, piel.GLindex); //Recargadera brazo derecho
+						glTranslatef(0.0, 0.1, -0.4);
+						glRotatef(90.0, 1, 0, 0);
+						sillon6.cilindro(0.1, 0.8, 20, piel.GLindex); //Cilindro recargadera
+					glPopMatrix();
+					glPushMatrix();
+						glTranslatef(0.0, 0.175, -0.525);
+						sillon6.prisma(0.75, 2.4, 0.25, piel.GLindex); //Recargadera espalda
+						glTranslatef(1.2, 0.375, 0.0);
+						glRotatef(90.0, 0, 0, 1);
+						sillon6.cilindro(0.125, 2.4, 20, piel.GLindex); //Cilindro recargadera
+					glPopMatrix();
+				glPopMatrix();
 
-			//Creación del sillon 6
-			glPushMatrix();
-				glTranslatef(-2.125, -4.8, 0.8);
-				glRotatef(90.0, 0.0, 1.0, 0.0);
-				sillon6.prisma(0.4, 2.4, 0.8, piel.GLindex); //Asiento
+				//Creación del sillon 7
 				glPushMatrix();
-					glTranslatef(1.1, 0.3, 0.0);
-					sillon6.prisma(0.2, 0.2, 0.8, piel.GLindex); //Recargadera brazo izquierdo
-					glTranslatef(0.0, 0.1, -0.4);
-					glRotatef(90.0, 1, 0, 0);
-					sillon6.cilindro(0.1, 0.8, 20, piel.GLindex); //Cilindro de recargadera
+					glTranslatef(1.5, -4.8, 0.0);
+					glRotatef(-90.0, 0.0, 1.0, 0.0);
+					sillon7.prisma(0.4, 0.8, 0.8, piel.GLindex); //Asiento
+					glPushMatrix();
+						glTranslatef(0.3, 0.3, 0.0);
+						sillon7.prisma(0.2, 0.2, 0.8, piel.GLindex); //Recargadera brazo izquierdo
+						glTranslatef(0.0, 0.1, -0.4);
+						glRotatef(90.0, 1, 0, 0);
+						sillon7.cilindro(0.1, 0.8, 20, piel.GLindex); //Cilindro de recargadera
+					glPopMatrix();
+					glPushMatrix();
+						glTranslatef(-0.3, 0.3, 0.0);
+						sillon7.prisma(0.2, 0.2, 0.8, piel.GLindex); //Recargadera brazo derecho
+						glTranslatef(0.0, 0.1, -0.4);
+						glRotatef(90.0, 1, 0, 0);
+						sillon7.cilindro(0.1, 0.8, 20, piel.GLindex); //Cilindro recargadera
+					glPopMatrix();
+					glPushMatrix();
+						glTranslatef(0.0, 0.175, -0.525);
+						sillon7.prisma(0.75, 0.8, 0.25, piel.GLindex); //Recargadera espalda
+						glTranslatef(0.4, 0.375, 0.0);
+						glRotatef(90.0, 0, 0, 1);
+						sillon7.cilindro(0.125, 0.8, 20, piel.GLindex); //Cilindro recargadera
+					glPopMatrix();
 				glPopMatrix();
-				glPushMatrix();
-					glTranslatef(-1.1, 0.3, 0.0);
-					sillon6.prisma(0.2, 0.2, 0.8, piel.GLindex); //Recargadera brazo derecho
-					glTranslatef(0.0, 0.1, -0.4);
-					glRotatef(90.0, 1, 0, 0);
-					sillon6.cilindro(0.1, 0.8, 20, piel.GLindex); //Cilindro recargadera
-				glPopMatrix();
-				glPushMatrix();
-					glTranslatef(0.0, 0.175, -0.525);
-					sillon6.prisma(0.75, 2.4, 0.25, piel.GLindex); //Recargadera espalda
-					glTranslatef(1.2, 0.375, 0.0);
-					glRotatef(90.0, 0, 0, 1);
-					sillon6.cilindro(0.125, 2.4, 20, piel.GLindex); //Cilindro recargadera
-				glPopMatrix();
-			glPopMatrix();
 
-			//Creación del sillon 7
-			glPushMatrix();
-				glTranslatef(1.5, -4.8, 0.0);
-				glRotatef(-90.0, 0.0, 1.0, 0.0);
-				sillon7.prisma(0.4, 0.8, 0.8, piel.GLindex); //Asiento
+				//Creación del sillon extra
 				glPushMatrix();
-					glTranslatef(0.3, 0.3, 0.0);
-					sillon7.prisma(0.2, 0.2, 0.8, piel.GLindex); //Recargadera brazo izquierdo
-					glTranslatef(0.0, 0.1, -0.4);
-					glRotatef(90.0, 1, 0, 0);
-					sillon7.cilindro(0.1, 0.8, 20, piel.GLindex); //Cilindro de recargadera
+					glTranslatef(0.0, -4.8, 1.5);
+					glRotatef(180.0, 0.0, 1.0, 0.0);
+					sillon7.prisma(0.4, 1.6, 0.8, piel.GLindex); //Asiento
+					glPushMatrix();
+						glTranslatef(0.7, 0.3, 0.0);
+						sillon7.prisma(0.2, 0.2, 0.8, piel.GLindex); //Recargadera brazo izquierdo
+						glTranslatef(0.0, 0.1, -0.4);
+						glRotatef(90.0, 1, 0, 0);
+						sillon7.cilindro(0.1, 0.8, 20, piel.GLindex); //Cilindro de recargadera
+					glPopMatrix();
+					glPushMatrix();
+						glTranslatef(-0.7, 0.3, 0.0);
+						sillon7.prisma(0.2, 0.2, 0.8, piel.GLindex); //Recargadera brazo derecho
+						glTranslatef(0.0, 0.1, -0.4);
+						glRotatef(90.0, 1, 0, 0);
+						sillon7.cilindro(0.1, 0.8, 20, piel.GLindex); //Cilindro recargadera
+					glPopMatrix();
+					glPushMatrix();
+						glTranslatef(0.0, 0.175, -0.525);
+						sillon7.prisma(0.75, 1.6, 0.25, piel.GLindex); //Recargadera espalda
+						glTranslatef(0.8, 0.375, 0.0);
+						glRotatef(90.0, 0, 0, 1);
+						sillon7.cilindro(0.125, 1.6, 20, piel.GLindex); //Cilindro recargadera
+					glPopMatrix();
 				glPopMatrix();
-				glPushMatrix();
-					glTranslatef(-0.3, 0.3, 0.0);
-					sillon7.prisma(0.2, 0.2, 0.8, piel.GLindex); //Recargadera brazo derecho
-					glTranslatef(0.0, 0.1, -0.4);
-					glRotatef(90.0, 1, 0, 0);
-					sillon7.cilindro(0.1, 0.8, 20, piel.GLindex); //Cilindro recargadera
-				glPopMatrix();
-				glPushMatrix();
-					glTranslatef(0.0, 0.175, -0.525);
-					sillon7.prisma(0.75, 0.8, 0.25, piel.GLindex); //Recargadera espalda
-					glTranslatef(0.4, 0.375, 0.0);
-					glRotatef(90.0, 0, 0, 1);
-					sillon7.cilindro(0.125, 0.8, 20, piel.GLindex); //Cilindro recargadera
-				glPopMatrix();
-			glPopMatrix();
+			}
 
 		glPopMatrix(); 
 
@@ -530,8 +623,18 @@ void animacion() {
 	}
 
 	if (ani4) {
-		objCamera.Position_Camera(0.0f, -2.5f, 20.0f, 0, -1.0f, 0, 0, 1.0f, 0);
+		objCamera.Position_Camera(15.0f, -2.5f, 20.0f, 0, -1.0f, 0, 0, 1.0f, 0);
 		ani4 = false;
+	}
+
+	if (ani5) {
+		mueve += 0.125;
+		cae += 0.5;
+	}
+
+	if (!ani5) {
+		mueve = 0.0;
+		cae = 0.0;
 	}
 
 	glutPostRedisplay();
@@ -589,6 +692,11 @@ void keyboard ( unsigned char key, int x, int y )  // Create Keyboard Function
 		case 'o':
 		case 'O':
 			ani4 ^= true;
+			break;
+
+		case 'p':
+		case 'P':
+			ani5 ^= true;
 			break;
 
 		case 27:        // Cuando Esc es presionado...
